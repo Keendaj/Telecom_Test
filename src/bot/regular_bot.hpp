@@ -39,7 +39,9 @@ private:
     std::unordered_map<u8, Room> memory;         ///< Память бота: сохраняет информацию обо всех увиденных комнатах
     std::unordered_set<u8> visited_rooms;        ///< ID комнат, в которые бот заходил физически
     std::unordered_map<u8, bool> free_collect;   ///< Флаг бесплатного сбора ресурса (при первом посещении)
-
+    u8 initial_food = 0;
+    bool is_initial_food_set = false;
+    
     /**
      * @brief Выполняет логику фазы исследования.
      * @param current_room Текущая комната.

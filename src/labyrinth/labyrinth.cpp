@@ -3,31 +3,6 @@
 #include <stdexcept>
 #include <algorithm>
 
-u8 Resources::collect(ResourceType type) {
-    u8 amount = 0;
-    switch (type) {
-        case ResourceType::IRON: 
-            amount = iron; 
-            iron = 0; 
-            break;
-        case ResourceType::GOLD: 
-            amount = gold;
-            gold = 0; 
-            break;
-        case ResourceType::GEMS: 
-            amount = gems; 
-            gems = 0; 
-            break;
-        case ResourceType::EXP:  
-            amount = exp;  
-            exp = 0; 
-            break;
-        default: 
-        break;
-    }
-    return amount;
-}
-
 struct Labyrinth::Impl {
     std::unordered_map<u8, Room> rooms;
     u8 total_rooms_N;
