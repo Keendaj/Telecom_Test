@@ -1,7 +1,18 @@
 #pragma once
-#include "types.hpp"
+#include "../utils/types.hpp"
 #include <vector>
 
+
+/**
+ * @brief Перечисление доступных в подземелье типов ресурсов.
+ */
+enum class ResourceType {
+    NONE,
+    IRON,
+    GOLD,
+    GEMS,
+    EXP
+};
 
 /**
  * @brief Структура для хранения количества различных ресурсов в комнате.
@@ -22,17 +33,6 @@ struct Resources {
 };
 
 /**
- * @brief Перечисление доступных в подземелье типов ресурсов.
- */
-enum class ResourceType {
-    NONE,
-    IRON,
-    GOLD,
-    GEMS,
-    EXP
-};
-
-/**
  * @brief Структура, описывающая отдельную комнату в подземелье.
  */
 struct Room {
@@ -41,7 +41,7 @@ struct Room {
     Resources resources;            ///< Запасы ресурсов в данной комнате
 
     /**
-     * @brief Конструктор по умолчанию (необходим для std::unordered_map).
+     * @brief Конструктор по умолчанию.
      */
     Room() = default;
 
