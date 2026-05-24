@@ -1,20 +1,20 @@
-#include "../utils/config.hpp"
 #include "regular_bot.hpp"
+#include "../utils/config.hpp"
 
-#include <queue>
 #include <algorithm>
+#include <queue>
 #include <vector>
 
 RegularBot::RegularBot(ResourceType target) : target_resource(target) {}
 
-BotAction RegularBot::getNextAction(const Room& current_room, u8 current_food) {
+BotAction RegularBot::getNextAction(const Room &current_room, u8 current_food) {
     memory[current_room.id] = current_room;
-    
+
     if (visited_rooms.count(current_room.id) == 0) {
         visited_rooms.insert(current_room.id);
         free_collect[current_room.id] = true;
     }
-    
+
     if (!is_initial_food_set) {
         initial_food = current_food;
         is_initial_food_set = true;
@@ -28,16 +28,15 @@ BotAction RegularBot::getNextAction(const Room& current_room, u8 current_food) {
 
     if (current_phase == Phase::EXPLORE) {
         return handleExplorePhase(current_room, current_food);
-    } 
-    else {
+    } else {
         return handleReturnPhase(current_room, current_food);
     }
 }
 
-
-BotAction RegularBot::handleExplorePhase(const Room& current_room, u8 current_food) {
+BotAction RegularBot::handleExplorePhase(const Room &current_room,
+                                         u8 current_food) {
     ResourceType best_res = getBestResourceInRoom(current_room.resources);
-    
+
     if (best_res != ResourceType::NONE && free_collect[current_room.id]) {
         free_collect[current_room.id] = false;
         return {ActionType::COLLECT, 0, best_res};
@@ -56,7 +55,8 @@ BotAction RegularBot::handleExplorePhase(const Room& current_room, u8 current_fo
         return {ActionType::MOVE, best_adj.value(), ResourceType::NONE};
     }
 
-    std::optional<u8> next_step = getNextStepToNearestUnvisited(current_room.id);
+    std::optional<u8> next_step =
+        getNextStepToNearestUnvisited(current_room.id);
     if (next_step.has_value()) {
         return {ActionType::MOVE, next_step.value(), ResourceType::NONE};
     }
@@ -65,7 +65,8 @@ BotAction RegularBot::handleExplorePhase(const Room& current_room, u8 current_fo
     return handleReturnPhase(current_room, current_food);
 }
 
-BotAction RegularBot::handleReturnPhase(const Room& current_room, u8 current_food) {
+BotAction RegularBot::handleReturnPhase(const Room &current_room,
+                                        u8 current_food) {
     if (current_room.id == 0) {
         return {ActionType::FINISH, 0, ResourceType::NONE};
     }
@@ -78,7 +79,7 @@ BotAction RegularBot::handleReturnPhase(const Room& current_room, u8 current_foo
     if (current_food >= cost_to_home + collect_cost) {
         ResourceType best_res = getBestResourceInRoom(current_room.resources);
         if (best_res != ResourceType::NONE) {
-            free_collect[current_room.id] = false; 
+            free_collect[current_room.id] = false;
             return {ActionType::COLLECT, 0, best_res};
         }
     }
@@ -86,26 +87,34 @@ BotAction RegularBot::handleReturnPhase(const Room& current_room, u8 current_foo
     u8 next_step = getNextStepToHome(current_room.id);
     return {ActionType::MOVE, next_step, ResourceType::NONE};
 }
-ResourceType RegularBot::getBestResourceInRoom(const Resources& res) const {
-    u8 val_iron = Config::getResourceBaseValue(ResourceType::IRON) * (target_resource == ResourceType::IRON ? 2 : 1);
-    u8 val_gold = Config::getResourceBaseValue(ResourceType::GOLD) * (target_resource == ResourceType::GOLD ? 2 : 1);
-    u8 val_gems = Config::getResourceBaseValue(ResourceType::GEMS) * (target_resource == ResourceType::GEMS ? 2 : 1);
-    u8 val_exp  = Config::getResourceBaseValue(ResourceType::EXP)  * (target_resource == ResourceType::EXP  ? 2 : 1);
+ResourceType RegularBot::getBestResourceInRoom(const Resources &res) const {
+    u8 val_iron = Config::getResourceBaseValue(ResourceType::IRON) *
+                  (target_resource == ResourceType::IRON ? 2 : 1);
+    u8 val_gold = Config::getResourceBaseValue(ResourceType::GOLD) *
+                  (target_resource == ResourceType::GOLD ? 2 : 1);
+    u8 val_gems = Config::getResourceBaseValue(ResourceType::GEMS) *
+                  (target_resource == ResourceType::GEMS ? 2 : 1);
+    u8 val_exp = Config::getResourceBaseValue(ResourceType::EXP) *
+                 (target_resource == ResourceType::EXP ? 2 : 1);
 
     ResourceType best = ResourceType::NONE;
     u8 max_val = 0;
 
     if (res.iron > 0 && val_iron > max_val) {
-        best = ResourceType::IRON; max_val = val_iron; 
+        best = ResourceType::IRON;
+        max_val = val_iron;
     }
-    if (res.gold > 0 && val_gold > max_val) { 
-        best = ResourceType::GOLD; max_val = val_gold; 
+    if (res.gold > 0 && val_gold > max_val) {
+        best = ResourceType::GOLD;
+        max_val = val_gold;
     }
-    if (res.gems > 0 && val_gems > max_val) { 
-        best = ResourceType::GEMS; max_val = val_gems; 
+    if (res.gems > 0 && val_gems > max_val) {
+        best = ResourceType::GEMS;
+        max_val = val_gems;
     }
-    if (res.exp  > 0 && val_exp  > max_val) { 
-        best = ResourceType::EXP;  max_val = val_exp;  
+    if (res.exp > 0 && val_exp > max_val) {
+        best = ResourceType::EXP;
+        max_val = val_exp;
     }
 
     return best;
@@ -115,10 +124,10 @@ u8 RegularBot::calculateCostToHome(u8 current_id) {
     if (current_id == 0) {
         return 0;
     }
-    
+
     std::queue<u8> q;
     std::unordered_map<u8, u8> dist;
-    
+
     q.push(current_id);
     dist[current_id] = 0;
 
@@ -138,13 +147,13 @@ u8 RegularBot::calculateCostToHome(u8 current_id) {
         }
     }
 
-    return 255; 
+    return 255;
 }
 
 u8 RegularBot::getNextStepToHome(u8 current_id) {
     std::queue<u8> q;
     std::unordered_map<u8, u8> dist;
-    
+
     q.push(0);
     dist[0] = 0;
 
@@ -164,7 +173,8 @@ u8 RegularBot::getNextStepToHome(u8 current_id) {
     u8 best_adj = 255;
 
     for (u8 adj : memory[current_id].adjacent_rooms) {
-        if (visited_rooms.count(adj) && dist.count(adj) && dist[adj] == target_dist) {
+        if (visited_rooms.count(adj) && dist.count(adj) &&
+            dist[adj] == target_dist) {
             if (adj < best_adj) {
                 best_adj = adj;
             }
@@ -176,7 +186,7 @@ u8 RegularBot::getNextStepToHome(u8 current_id) {
 std::optional<u8> RegularBot::getNextStepToNearestUnvisited(u8 start_id) {
     std::queue<u8> q;
     std::unordered_map<u8, u8> dist;
-    std::unordered_map<u8, u8> first_step; 
+    std::unordered_map<u8, u8> first_step;
 
     q.push(start_id);
     dist[start_id] = 0;
@@ -188,16 +198,18 @@ std::optional<u8> RegularBot::getNextStepToNearestUnvisited(u8 start_id) {
         u8 curr = q.front();
         q.pop();
 
-        if (dist[curr] > min_dist) continue;
+        if (dist[curr] > min_dist)
+            continue;
 
         if (visited_rooms.count(curr) == 0) {
             if (dist[curr] < min_dist) {
                 min_dist = dist[curr];
                 best_target = curr;
-            } else if (dist[curr] == min_dist && (!best_target.has_value() || curr < best_target.value())) {
+            } else if (dist[curr] == min_dist && (!best_target.has_value() ||
+                                                  curr < best_target.value())) {
                 best_target = curr;
             }
-            continue; 
+            continue;
         }
 
         std::vector<u8> sorted_adj = memory[curr].adjacent_rooms;
@@ -215,6 +227,6 @@ std::optional<u8> RegularBot::getNextStepToNearestUnvisited(u8 start_id) {
     if (best_target.has_value()) {
         return first_step[best_target.value()];
     }
-    
+
     return std::nullopt;
 }

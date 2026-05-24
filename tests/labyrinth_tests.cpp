@@ -1,13 +1,13 @@
-#include <gtest/gtest.h>
 #include "../src/labyrinth/labyrinth.hpp"
 #include "../src/utils/types.hpp"
+#include <gtest/gtest.h>
 
 // Успешное добавление и получение стандартной комнаты
 TEST(LabyrinthTest, AddAndGetRoomSuccess) {
     Labyrinth lab(1);
     lab.addRoom(1, {0}, 10, 5, 2, 100);
-    
-    const auto& room = lab.getRoom(1);
+
+    const auto &room = lab.getRoom(1);
     EXPECT_EQ(room.id, 1);
     EXPECT_EQ(room.adjacent_rooms.size(), 1);
     EXPECT_EQ(room.adjacent_rooms[0], 0);
@@ -19,8 +19,8 @@ TEST(LabyrinthTest, AddAndGetRoomSuccess) {
 TEST(LabyrinthTest, AddRoomZeroIgnoresResources) {
     Labyrinth lab(1);
     lab.addRoom(0, {1}, 50, 50, 50, 50);
-    
-    const auto& room0 = lab.getRoom(0);
+
+    const auto &room0 = lab.getRoom(0);
     EXPECT_EQ(room0.id, 0);
     EXPECT_EQ(room0.resources.iron, 0);
     EXPECT_EQ(room0.resources.gold, 0);
@@ -32,7 +32,7 @@ TEST(LabyrinthTest, AddRoomZeroIgnoresResources) {
 TEST(LabyrinthTest, GetNonExistentRoomThrows) {
     Labyrinth lab(1);
     lab.addRoom(0, {}, 0, 0, 0, 0);
-    
+
     EXPECT_THROW(lab.getRoom(99), std::out_of_range);
 }
 
@@ -42,7 +42,7 @@ TEST(LabyrinthTest, ValidationSuccessOnBidirectionalGraph) {
     lab.addRoom(0, {1, 2}, 0, 0, 0, 0);
     lab.addRoom(1, {0}, 10, 0, 0, 0);
     lab.addRoom(2, {0}, 0, 10, 0, 0);
-    
+
     EXPECT_TRUE(lab.validate());
 }
 
@@ -51,7 +51,7 @@ TEST(LabyrinthTest, ValidationFailsOnUnidirectionalLink) {
     Labyrinth lab(2);
     lab.addRoom(0, {1}, 0, 0, 0, 0);
     lab.addRoom(1, {}, 10, 0, 0, 0);
-    
+
     EXPECT_FALSE(lab.validate());
 }
 
@@ -59,7 +59,7 @@ TEST(LabyrinthTest, ValidationFailsOnUnidirectionalLink) {
 TEST(LabyrinthTest, ValidationFailsOnNonExistentAdjacentRoom) {
     Labyrinth lab(1);
     lab.addRoom(0, {99}, 0, 0, 0, 0);
-    
+
     EXPECT_FALSE(lab.validate());
 }
 
@@ -67,7 +67,7 @@ TEST(LabyrinthTest, ValidationFailsOnNonExistentAdjacentRoom) {
 TEST(LabyrinthTest, HasConnectionReturnsTrueForValidLink) {
     Labyrinth lab(2);
     lab.addRoom(0, {1, 2}, 0, 0, 0, 0);
-    
+
     EXPECT_TRUE(lab.hasConnection(0, 1));
     EXPECT_TRUE(lab.hasConnection(0, 2));
 }
@@ -77,7 +77,7 @@ TEST(LabyrinthTest, HasConnectionReturnsFalseForInvalidLink) {
     Labyrinth lab(3);
     lab.addRoom(0, {1}, 0, 0, 0, 0);
     lab.addRoom(1, {0}, 0, 0, 0, 0);
-    
+
     EXPECT_FALSE(lab.hasConnection(0, 2));
     EXPECT_FALSE(lab.hasConnection(99, 1));
 }
@@ -86,7 +86,7 @@ TEST(LabyrinthTest, HasConnectionReturnsFalseForInvalidLink) {
 TEST(LabyrinthTest, CollectDifferentResourceTypes) {
     Labyrinth lab(1);
     lab.addRoom(1, {0}, 10, 20, 30, 40);
-    
+
     EXPECT_EQ(lab.collectResource(1, ResourceType::GOLD), 20);
     EXPECT_EQ(lab.collectResource(1, ResourceType::GEMS), 30);
     EXPECT_EQ(lab.collectResource(1, ResourceType::EXP), 40);
@@ -96,10 +96,10 @@ TEST(LabyrinthTest, CollectDifferentResourceTypes) {
 TEST(LabyrinthTest, CollectResourceDepletesIt) {
     Labyrinth lab(1);
     lab.addRoom(1, {0}, 50, 0, 0, 0);
-    
+
     u8 first_collect = lab.collectResource(1, ResourceType::IRON);
     EXPECT_EQ(first_collect, 50);
-    
+
     u8 second_collect = lab.collectResource(1, ResourceType::IRON);
     EXPECT_EQ(second_collect, 0);
 }
@@ -114,7 +114,7 @@ TEST(LabyrinthTest, CollectFromNonExistentRoomReturnsZero) {
 TEST(LabyrinthTest, GetRoomsCountReturnsCorrectValue) {
     Labyrinth lab1(5);
     EXPECT_EQ(lab1.getRoomsCount(), 5);
-    
+
     Labyrinth lab2(255);
     EXPECT_EQ(lab2.getRoomsCount(), 255);
 }
