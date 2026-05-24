@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <memory>
 #include "../utils/types.hpp"
 #include "labyrinth_types.hpp"
+#include <memory>
+#include <vector>
 
 /**
  * @brief Класс, представляющий граф подземелья.
@@ -12,18 +12,18 @@
  * Реализован с помощью PImpl, чтобы скрыть внутренности и ускорить компиляцию
  */
 class Labyrinth {
-public:
+  public:
     /**
      * @brief Конструктор лабиринта.
      * @param n Количество комнат в подземелье (не считая стартовую).
      */
     explicit Labyrinth(u8 n);
-    
-    ~Labyrinth(); 
-    Labyrinth(const Labyrinth&) = delete;
-    Labyrinth& operator=(const Labyrinth&) = delete;
-    Labyrinth(Labyrinth&&) = delete;
-    Labyrinth& operator=(Labyrinth&&) = delete;
+
+    ~Labyrinth();
+    Labyrinth(const Labyrinth &) = delete;
+    Labyrinth &operator=(const Labyrinth &) = delete;
+    Labyrinth(Labyrinth &&) = delete;
+    Labyrinth &operator=(Labyrinth &&) = delete;
 
     /**
      * @brief Добавляет новую комнату в лабиринт.
@@ -34,7 +34,8 @@ public:
      * @param gems Количество ресурса 'gems' [0, 255].
      * @param exp Количество ресурса 'exp' [0, 255].
      */
-    void addRoom(u8 id, const std::vector<u8>& adj, u8 iron, u8 gold, u8 gems, u8 exp);
+    void addRoom(u8 id, const std::vector<u8> &adj, u8 iron, u8 gold, u8 gems,
+                 u8 exp);
 
     /**
      * @brief Проверяет правильность лабиринта.
@@ -49,7 +50,7 @@ public:
      * @return Константная ссылка на Room.
      * @throw std::out_of_range Если комната с указанным ID не существует.
      */
-    const Room& getRoom(u8 id) const;
+    const Room &getRoom(u8 id) const;
 
     /**
      * @brief Проверяет наличие прямого перехода между двумя комнатами.
@@ -72,9 +73,9 @@ public:
      * @brief Возвращает общее заявленное количество комнат.
      * @return Количество комнат N (без учета нулевой).
      */
-    u8 getRoomsCount() const; 
+    u8 getRoomsCount() const;
 
-private:
+  private:
     struct Impl;
     std::unique_ptr<Impl> pimpl;
 };

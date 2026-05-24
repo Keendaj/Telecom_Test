@@ -1,7 +1,11 @@
 #pragma once
-#include "types.hpp"
+#include "../utils/types.hpp"
 #include <vector>
 
+/**
+ * @brief Перечисление доступных в подземелье типов ресурсов.
+ */
+enum class ResourceType { NONE, IRON, GOLD, GEMS, EXP };
 
 /**
  * @brief Структура для хранения количества различных ресурсов в комнате.
@@ -9,8 +13,16 @@
 struct Resources {
     u8 iron = 0; ///< Количество железа
     u8 gold = 0; ///< Количество золота
-    u8 gems = 0; ///< Количество самоцветов (кристаллов)
+    u8 gems = 0; ///< Количество кристаллов
     u8 exp = 0;  ///< Количество опыта
+
+    bool iron_collected =
+        false; ///< Было ли собрано железо (для корректного вывода)
+    bool gold_collected =
+        false; ///< Было ли собрано золото (для корректного вывода)
+    bool gems_collected =
+        false; ///< Были ли собраны кристаллы (для корректного вывода)
+    bool exp_collected = false; ///< Был ли собран опыт (для корректного вывода)
 
     /**
      * @brief Изымает весь ресурс указанного типа.
@@ -22,17 +34,6 @@ struct Resources {
 };
 
 /**
- * @brief Перечисление доступных в подземелье типов ресурсов.
- */
-enum class ResourceType {
-    NONE,
-    IRON,
-    GOLD,
-    GEMS,
-    EXP
-};
-
-/**
  * @brief Структура, описывающая отдельную комнату в подземелье.
  */
 struct Room {
@@ -41,7 +42,7 @@ struct Room {
     Resources resources;            ///< Запасы ресурсов в данной комнате
 
     /**
-     * @brief Конструктор по умолчанию (необходим для std::unordered_map).
+     * @brief Конструктор по умолчанию.
      */
     Room() = default;
 
@@ -50,5 +51,6 @@ struct Room {
      * @param id_ Уникальный идентификатор комнаты.
      * @param adjacent_rooms_ Список ID смежных комнат.
      */
-    explicit Room(u8 id_, std::vector<u8> adjacent_rooms_) : id(id_), adjacent_rooms(adjacent_rooms_) {}
+    explicit Room(u8 id_, std::vector<u8> adjacent_rooms_)
+        : id(id_), adjacent_rooms(adjacent_rooms_) {}
 };
