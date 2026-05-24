@@ -14,10 +14,14 @@ BotAction RegularBot::getNextAction(const Room& current_room, u8 current_food) {
         visited_rooms.insert(current_room.id);
         free_collect[current_room.id] = true;
     }
- 
+    
+    if (!is_initial_food_set) {
+        initial_food = current_food;
+        is_initial_food_set = true;
+    }
+
     if (current_phase == Phase::EXPLORE) {
-        u8 cost_to_home = calculateCostToHome(current_room.id);
-        if (current_food <= cost_to_home + 1) {
+        if (current_food <= initial_food / 2) {
             current_phase = Phase::RETURN;
         }
     }
@@ -68,7 +72,10 @@ BotAction RegularBot::handleReturnPhase(const Room& current_room, u8 current_foo
 
     u8 cost_to_home = calculateCostToHome(current_room.id);
 
-    if (current_food > cost_to_home) {
+    bool is_free = free_collect[current_room.id];
+    u8 collect_cost = is_free ? 0 : 1;
+
+    if (current_food >= cost_to_home + collect_cost) {
         ResourceType best_res = getBestResourceInRoom(current_room.resources);
         if (best_res != ResourceType::NONE) {
             free_collect[current_room.id] = false; 
@@ -79,7 +86,6 @@ BotAction RegularBot::handleReturnPhase(const Room& current_room, u8 current_foo
     u8 next_step = getNextStepToHome(current_room.id);
     return {ActionType::MOVE, next_step, ResourceType::NONE};
 }
-
 ResourceType RegularBot::getBestResourceInRoom(const Resources& res) const {
     u8 val_iron = Config::getResourceBaseValue(ResourceType::IRON) * (target_resource == ResourceType::IRON ? 2 : 1);
     u8 val_gold = Config::getResourceBaseValue(ResourceType::GOLD) * (target_resource == ResourceType::GOLD ? 2 : 1);

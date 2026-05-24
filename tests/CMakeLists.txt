@@ -10,11 +10,13 @@ FetchContent_MakeAvailable(googletest)
 add_executable(unit_tests 
     labyrinth_tests.cpp
     bot_tests.cpp
+    manager_tests.cpp
 )
 
 target_link_libraries(unit_tests PRIVATE 
     labyrinth 
     bot
+    simulator 
     gtest_main
 )
 

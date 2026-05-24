@@ -5,17 +5,22 @@
 #include <string>
 #include <vector>
 
-using u8  = std::uint8_t;
-using u16 = std::uint16_t;
-using u32 = std::uint32_t;
-using u64 = std::uint64_t;
+/**
+ * @file types.hpp
+ * @brief Псевдонимы базовых типов для удобства и унификации кода.
+ */
 
-using i8  = std::int8_t;
-using i16 = std::int16_t;
-using i32 = std::int32_t;
-using i64 = std::int64_t;
+using u8  = std::uint8_t;  ///< 8-битное беззнаковое целое (используется для ID комнат и количества еды).
+using u16 = std::uint16_t; ///< 16-битное беззнаковое целое.
+using u32 = std::uint32_t; ///< 32-битное беззнаковое целое (используется для итоговой суммы очков).
+using u64 = std::uint64_t; ///< 64-битное беззнаковое целое.
 
-using f32 = float;
-using f64 = double;
+using i8  = std::int8_t;   ///< 8-битное знаковое целое.
+using i16 = std::int16_t;  ///< 16-битное знаковое целое.
+using i32 = std::int32_t;  ///< 32-битное знаковое целое.
+using i64 = std::int64_t;  ///< 64-битное знаковое целое.
 
-using str = std::string;
+using f32 = float;         ///< 32-битное число с плавающей точкой.
+using f64 = double;        ///< 64-битное число с плавающей точкой.
+
+using str = std::string;   ///< Стандартная строка C++.
